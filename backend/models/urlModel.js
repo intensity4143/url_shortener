@@ -27,11 +27,13 @@ const createUrl = async (originalUrl) => {
 
         return result.rows[0];
 
-    } catch (error) {
+    } 
+    catch (error) {
         await client.query("ROLLBACK");
         throw error;
 
-    } finally {
+    } 
+    finally {
         client.release();
     }
 };
