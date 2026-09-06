@@ -5,18 +5,16 @@ const encodeBase62 = (id) =>{
     if(id == 0)
         return BASE62_CHARS[0];
 
-    let shortUrl = ""
+    let shortCode = ""
 
     while(id > 0){
-        let rm = id % 62;
+        let rm = id % BASE;
         const ch = BASE62_CHARS[rm];
-        shortUrl = ch + shortUrl;
-        id = Math.floor(id / 62);
+        shortCode = ch + shortCode;
+        id = Math.floor(id / BASE);
     }
 
-    return shortUrl;
+    return shortCode;
 }
 
-module.exports = {
-    encodeBase62
-};
+module.exports = encodeBase62

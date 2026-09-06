@@ -1,4 +1,5 @@
-const { createShortUrl, getOriginalUrl} = require("../models/urlModel");
+const { createUrl, getUrl, getByLongUrl} = require("../models/urlModel");
+const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
 
 const createShortUrl = async (req, res) => {
     try {
@@ -11,13 +12,13 @@ const createShortUrl = async (req, res) => {
             });
         }
 
-        const exist = await getUrlByOriginalUrl(originalUrl);
+        const exist = await getByLongUrl(originalUrl);
 
         if (exist) {
             return res.status(200).json({
                 success: true,
                 message: "URL already exists",
-                shortCode: exist.short_code
+                shortUrl: `${BASE_URL}/${exist.short_code}`
             });
         }
 
@@ -26,7 +27,7 @@ const createShortUrl = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: "URL shortened successfully",
-            shortCode: entry.short_code
+            shortUrl: `${BASE_URL}/${entry.short_code}`
         });
 
     } catch (error) {
@@ -43,7 +44,7 @@ const getOriginalUrl = async (req, res) =>{
     try {
         const {shortCode} = req.params;
         
-        const result = await getOriginalUrl(shortCode);
+        const result = await getUrl(shortCode);
 
         if(!result){
             return res.status(404).json({

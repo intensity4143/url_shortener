@@ -1,7 +1,7 @@
 const pool = require("../config/database");
 const encodeBase62 = require("../utils/encodeBase62");
 
-const createShortUrl = async (originalUrl) => {
+const createUrl = async (originalUrl) => {
     const client = await pool.connect();
 
     try {
@@ -17,6 +17,7 @@ const createShortUrl = async (originalUrl) => {
 
         const result = await client.query(
             `INSERT INTO urls (id, original_url, short_code)
+             OVERRIDING SYSTEM VALUE
              VALUES ($1, $2, $3)
              RETURNING id, original_url, short_code, created_at`,
             [id, originalUrl, shortCode]
@@ -35,7 +36,7 @@ const createShortUrl = async (originalUrl) => {
     }
 };
 
-const getOriginalUrl = async (shortCode) => {
+const getUrl = async (shortCode) => {
     const result = await pool.query(
         `SELECT original_url
          FROM urls
@@ -46,7 +47,23 @@ const getOriginalUrl = async (shortCode) => {
     return result.rows[0];
 };
 
+const getByLongUrl = async (originalUrl) =>{
+    const result = await pool.query(
+        `SELECT short_code 
+        FROM urls
+        WHERE original_url = $1`,
+        [originalUrl]
+    )
+
+    if(result.rows.length > 0){
+        return result.rows[0];
+    }
+
+    return null;
+}
+
 module.exports = {
-    createShortUrl,
-    getOriginalUrl
+    createUrl,
+    getUrl,
+    getByLongUrl
 };

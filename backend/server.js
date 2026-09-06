@@ -6,6 +6,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 const pool = require("./config/database");
+const urlRoutes = require("./routes/urlRoutes")
+
+app.use('/api', urlRoutes);
 
 app.get("/", (req,res)=>{
     res.json({message: "welcome to backend server"});
