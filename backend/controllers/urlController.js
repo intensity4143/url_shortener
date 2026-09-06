@@ -1,4 +1,4 @@
-const { createUrl, getUrl, getByLongUrl } = require("../models/urlModel");
+const urlService = require("../services/urlService");
 const BASE_URL = process.env.BASE_URL || "http://localhost:5000/api";
 
 const createShortUrl = async (req, res) => {
@@ -9,25 +9,18 @@ const createShortUrl = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Please provide url"
-            });
-        }
+            })
+        }    
 
-        const exist = await getByLongUrl(originalUrl);
+        // call for service
+        const result = await urlService.createShortUrl(originalUrl);
 
-        if (exist) {
-            return res.status(200).json({
-                success: true,
-                message: "URL already exists",
-                shortUrl: `${BASE_URL}/${exist.short_code}`
-            });
-        }
-
-        const entry = await createUrl(originalUrl);
-
-        return res.status(201).json({
+        return res.status(result.created ? 201 : 200).json({
             success: true,
-            message: "URL shortened successfully",
-            shortUrl: `${BASE_URL}/${entry.short_code}`
+            message: result.created
+                ? "URL shortened successfully"
+                : "URL already exists",
+            shortUrl: `${BASE_URL}/${result.shortCode}`
         });
 
     } catch (error) {
@@ -44,7 +37,7 @@ const getOriginalUrl = async (req, res) =>{
     try {
         const {shortCode} = req.params;
 
-        const result = await getUrl(shortCode);
+        const result = await urlService.getOriginalUrl(shortCode);
 
         if(!result){
             return res.status(404).json({
