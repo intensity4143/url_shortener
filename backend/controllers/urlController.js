@@ -1,5 +1,5 @@
 const urlService = require("../services/urlService");
-const BASE_URL = process.env.BASE_URL || "http://localhost:5000/api";
+const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
 
 const createShortUrl = async (req, res) => {
     try {
@@ -9,8 +9,8 @@ const createShortUrl = async (req, res) => {
             return res.status(400).json({
                 success: false,
                 message: "Please provide url"
-            })
-        }    
+            });
+        }
 
         // call for service
         const result = await urlService.createShortUrl(originalUrl);
@@ -23,7 +23,8 @@ const createShortUrl = async (req, res) => {
             shortUrl: `${BASE_URL}/${result.shortCode}`
         });
 
-    } catch (error) {
+    } 
+    catch (error) {
         console.error(error);
 
         return res.status(500).json({
@@ -33,20 +34,22 @@ const createShortUrl = async (req, res) => {
     }
 };
 
-const getOriginalUrl = async (req, res) =>{
+const getOriginalUrl = async (req, res) => {
     try {
-        const {shortCode} = req.params;
+        const { shortCode } = req.params;
 
+        // call for service ( cache miss )
         const result = await urlService.getOriginalUrl(shortCode);
 
-        if(!result){
+        if (!result) {
             return res.status(404).json({
                 success: false,
                 message: "URL not found"
-            })
+            });
         }
 
-        return res.redirect(result.original_url)
+        return res.redirect(result.original_url);
+
     } 
     catch (error) {
         console.log(error);
@@ -54,11 +57,11 @@ const getOriginalUrl = async (req, res) =>{
         return res.status(500).json({
             success: false,
             message: "Internal server error"
-        })
+        });
     }
-}
+};
 
-module.exports = { 
+module.exports = {
     createShortUrl,
-    getOriginalUrl 
+    getOriginalUrl
 };
