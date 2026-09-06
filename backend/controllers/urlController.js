@@ -38,7 +38,7 @@ const getOriginalUrl = async (req, res) => {
     try {
         const { shortCode } = req.params;
 
-        // call for service ( cache miss )
+        // call for service
         const result = await urlService.getOriginalUrl(shortCode);
 
         if (!result) {

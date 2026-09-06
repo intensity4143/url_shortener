@@ -1,5 +1,6 @@
 import http from "k6/http";
 import { check } from "k6";
+const url = "http://localhost:5000/1fnx"
 
 export const options = {
     vus: 200,
@@ -8,7 +9,7 @@ export const options = {
 
 export default function () {
     const response = http.get(
-        "http://localhost:5000/api/1fnw",
+        url,
         {
             redirects: 0
         }
