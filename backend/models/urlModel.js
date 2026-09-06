@@ -11,16 +11,16 @@ const createUrl = async (originalUrl) => {
             `SELECT nextval('urls_id_seq') AS id`
         );
 
-        const id = idResult.rows[0].id;
+        const nextId = idResult.rows[0].id;
 
-        const shortCode = encodeBase62(id);
+        const shortCode = encodeBase62(nextId);
 
         const result = await client.query(
             `INSERT INTO urls (id, original_url, short_code)
              OVERRIDING SYSTEM VALUE
              VALUES ($1, $2, $3)
              RETURNING id, original_url, short_code, created_at`,
-            [id, originalUrl, shortCode]
+            [nextId, originalUrl, shortCode]
         );
 
         await client.query("COMMIT");

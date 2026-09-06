@@ -1,5 +1,5 @@
 const { createUrl, getUrl, getByLongUrl} = require("../models/urlModel");
-const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
+const BASE_URL = process.env.BASE_URL || "http://localhost:5000/api";
 
 const createShortUrl = async (req, res) => {
     try {
