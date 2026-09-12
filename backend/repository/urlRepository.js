@@ -1,4 +1,4 @@
-const pool = require("../config/database");
+const {pool} = require("../config/database");
 
 const createUrl = async (id, originalUrl, shortCode) => {
     const result = await pool.query(
@@ -45,10 +45,25 @@ const getNextId = async () => {
     return result.rows[0].id;
 };
 
+const insertAnalyticsEvent = async (shortCode, timestamp) =>{
+
+    console.log("inserting into db..")
+    const result = await pool.query(
+        `INSERT into analytics_events (short_code, visited_at)
+        VALUES ($1, $2)
+        RETURNING id, short_code, visited_at`,
+        [shortCode, timestamp]
+    );
+
+    console.log("inserted successfully....")
+    return result.rows[0];
+}
+
 
 module.exports = {
     createUrl,
     getByShortCode,
     getByLongUrl,
-    getNextId
+    getNextId,
+    insertAnalyticsEvent
 };

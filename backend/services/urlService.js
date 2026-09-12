@@ -1,6 +1,19 @@
 const urlRepository = require("../repository/urlRepository");
 const encodeBase62 = require("../utils/encodeBase62");
 const { redis } = require("../config/redis");
+const {sendAnalyticsEvent} = require("../kafka/producer");
+
+const publishAnalyticsEvent = async(shortCode) =>{
+    const event = {
+        shortCode,
+        timestamp: new Date().toISOString()
+    };
+    
+    sendAnalyticsEvent(event).catch((err)=>{
+        console.log("Analytics event failed", err);
+    })
+
+}
 
 const createShortUrl = async (originalUrl) => {
     const key = `url:long:${originalUrl}`;
@@ -74,6 +87,9 @@ const getOriginalUrl = async (shortCode) => {
 
     // Cache hit
     if (cacheUrl) {
+
+        publishAnalyticsEvent(shortCode);
+
         return {
             original_url: cacheUrl
         };
@@ -92,6 +108,8 @@ const getOriginalUrl = async (shortCode) => {
         result.original_url,
         { EX: 1800 }
     );
+
+    publishAnalyticsEvent(shortCode);
 
     return result;
 };

@@ -1,23 +1,28 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
-require("dotenv").config();
+const {connectDatabase} = require("./config/database");
+const urlRoutes = require("./routes/urlRoutes")
+const {connectRedis } = require("./config/redis")
+const {connectProducer} = require("./config/kafka");
 
 const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
-const pool = require("./config/database");
-const urlRoutes = require("./routes/urlRoutes")
-const { redis, connectRedis } = require("./config/redis")
 
 app.use('/', urlRoutes);
 
 app.get("/", (req,res)=>{
-    res.json({message: "welcome to backend server"});
+    res.json({
+        message: "welcome to backend server"
+    });
 })
 
 const startServer = async () => {
     try {
+        await connectDatabase();
         await connectRedis();
+        await connectProducer();
         
         app.listen(PORT, ()=>{
         console.log(`server started at port ${PORT}`)
