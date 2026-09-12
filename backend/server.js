@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const {connectDatabase} = require("./config/database");
 const urlRoutes = require("./routes/urlRoutes")
+const analyticsRoutes = require("./routes/analyticsRoutes")
 const {connectRedis } = require("./config/redis")
 const {connectProducer} = require("./config/kafka");
 
@@ -10,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 
 
-app.use('/', urlRoutes);
+app.use('/', urlRoutes, analyticsRoutes);
 
 app.get("/", (req,res)=>{
     res.json({

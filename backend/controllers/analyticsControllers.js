@@ -20,6 +20,25 @@ const getAnalytics = async (req, res) =>{
     }
 }
 
+const getOverview = async(req, res) => {
+    try {
+        const result = await analyticsService.getOverview();
+
+        return res.json({
+            success: true,
+            result
+        })
+    } 
+    catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
+    }
+}
+
 module.exports = {
-    getAnalytics
+    getAnalytics,
+    getOverview
 }
